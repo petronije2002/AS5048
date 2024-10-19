@@ -1,6 +1,6 @@
 #include "AS5048my.h"
 
-
+#include "esp_log.h"
 
 AS5048::AS5048(rmt_channel_t channel, gpio_num_t gpio_num)
     : _channel(channel), _gpioNum(gpio_num), _angle(0), _previousAngle(0), _lastTime(0) {}
@@ -11,10 +11,11 @@ esp_err_t AS5048::init() {
     rmtConfig.rmt_mode = RMT_MODE_RX;        // Set the RMT mode to RX
     rmtConfig.channel = _channel;            // Set the RMT channel
     rmtConfig.gpio_num = _gpioNum;          // Set the GPIO number
-    rmtConfig.clk_div = 80;                  // Adjust the clock divider as necessary
+    rmtConfig.clk_div = 40;                  // Adjust the clock divider as necessary
 
     // Set valid RX configuration parameters
     rmtConfig.rx_config.idle_threshold = 1000; // Idle threshold in ticks
+
 
     esp_err_t err = rmt_config(&rmtConfig); // Configure the RMT driver with the specified settings
     if (err != ESP_OK) {
@@ -23,6 +24,7 @@ esp_err_t AS5048::init() {
 
     return ESP_OK; // Return success
 }
+
 
 uint16_t AS5048::readAngle() {
     rmt_item32_t item;
